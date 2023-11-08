@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Figtree } from 'next/font/google';
 
 import Sidebar from '@/components/sidebar';
+import SupabaseProvider from '@/components/providers/supabase-provider';
+import UserProvider from '@/components/providers/user-provider';
 
 import './globals.css';
 
@@ -20,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={font.className}>
-        <Sidebar>{children}</Sidebar>
+        <SupabaseProvider>
+          <UserProvider>
+            <Sidebar>{children}</Sidebar>
+          </UserProvider>
+        </SupabaseProvider>
       </body>
     </html>
   );
