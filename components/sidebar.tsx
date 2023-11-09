@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 
-import Box from './box';
+import Box from './ui/box';
 import SidebarItem from './sidebarItem';
 import Library from './library';
 

@@ -12,7 +12,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import useAuthModal from '@/hooks/use-auth-modal';
 import { useUser } from '@/hooks/use-user';
 
-import Button from './button';
+import Button from './ui/button';
 
 interface HeaderProps {
   children: React.ReactNode;
