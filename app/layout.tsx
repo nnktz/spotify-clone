@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Figtree } from 'next/font/google';
 
 import getSongsByUserId from '@/actions/get-songs-by-user-id';
+import getActiveProductsWithPrices from '@/actions/get-active-products-with-prices';
 
 import Sidebar from '@/components/sidebar';
 import Player from '@/components/player';
@@ -27,6 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const userSongs = await getSongsByUserId();
+  const products = await getActiveProductsWithPrices();
 
   return (
     <html lang='en'>
@@ -34,7 +36,7 @@ export default async function RootLayout({
         <ToastProvider />
         <SupabaseProvider>
           <UserProvider>
-            <ModalProvider />
+            <ModalProvider products={products} />
             <Sidebar songs={userSongs}>{children}</Sidebar>
             <Player />
           </UserProvider>

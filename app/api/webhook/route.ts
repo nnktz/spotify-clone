@@ -5,8 +5,8 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/libs/stripe';
 import {
   manageSubscriptionStatusChange,
-  updateProductRecord,
   upsertPriceRecord,
+  upsertProductRecord,
 } from '@/libs/supabase-admin';
 
 const relevantEvents = new Set([
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
-    console.log('Error message: ' + error.message);
+    console.log('❌ Error message: ' + error.message);
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       switch (event.type) {
         case 'product.created':
         case 'product.updated':
-          await updateProductRecord(event.data.object as Stripe.Product);
+          await upsertProductRecord(event.data.object as Stripe.Product);
           break;
         case 'price.created':
         case 'price.updated':

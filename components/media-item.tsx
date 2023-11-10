@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+
 import useLoadImage from '@/hooks/use-load-image';
 import { Song } from '@/types';
-import Image from 'next/image';
+import usePlayer from '@/hooks/use-player';
 
 interface MediaItemProps {
   data: Song;
@@ -10,12 +12,15 @@ interface MediaItemProps {
 }
 
 const MediaItem: React.FC<MediaItemProps> = ({ data, onClick }) => {
+  const player = usePlayer();
   const imagePath = useLoadImage(data);
 
   const handleClick = () => {
     if (onClick) {
       return onClick(data.id);
     }
+
+    return player.setId(data.id);
   };
 
   return (
