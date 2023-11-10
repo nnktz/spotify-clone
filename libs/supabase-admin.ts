@@ -16,8 +16,8 @@ const updateProductRecord = async (product: Stripe.Product) => {
     id: product.id,
     active: product.active,
     name: product.name,
-    description: product.description!,
-    image: product.images?.[0],
+    description: product.description ?? undefined,
+    image: product.images?.[0] ?? null,
     metadata: product.metadata,
   };
 
@@ -36,9 +36,9 @@ const upsertPriceRecord = async (price: Stripe.Price) => {
     product_id: typeof price.product === 'string' ? price.product : '',
     active: price.active,
     currency: price.currency,
-    description: price.nickname!,
+    description: price.nickname ?? undefined,
     type: price.type,
-    unit_amount: price.unit_amount!,
+    unit_amount: price.unit_amount ?? undefined,
     interval: price.recurring?.interval,
     interval_count: price.recurring?.interval_count,
     trial_period_days: price.recurring?.trial_period_days,
@@ -77,23 +77,22 @@ const createOrRetrieveCustomer = async ({
 
     if (email) {
       customerData.email = email;
-
-      const customer = await stripe.customers.create(customerData);
-
-      const { error: supbabaseError } = await supabaseAdmin
-        .from('customers')
-        .insert([{ id: uuid, stipe_customer_id: customer.id }]);
-
-      if (supbabaseError) {
-        throw supbabaseError;
-      }
-
-      console.log(`New customer created and inserted for ${uuid}`);
-      return customer.id;
     }
 
-    return data?.stripe_customer_id;
+    const customer = await stripe.customers.create(customerData);
+    const { error: supabaseError } = await supabaseAdmin
+      .from('customers')
+      .insert([{ id: uuid, stripe_customer_id: customer.id }]);
+
+    if (supabaseError) {
+      throw supabaseError;
+    }
+
+    console.log(`New customer created and inserted for ${uuid}.`);
+
+    return customer.id;
   }
+  return data.stripe_customer_id;
 };
 
 const copyBillingDetailsToCustomer = async (
@@ -101,15 +100,15 @@ const copyBillingDetailsToCustomer = async (
   payment_method: Stripe.PaymentMethod
 ) => {
   const customer = payment_method.customer as string;
+
   const { name, phone, address } = payment_method.billing_details;
 
   if (!name || !phone || !address) {
     return;
   }
 
-  // @ts-ignore
+  //@ts-ignore
   await stripe.customers.update(customer, { name, phone, address });
-
   const { error } = await supabaseAdmin
     .from('users')
     .update({
