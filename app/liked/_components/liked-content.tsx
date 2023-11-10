@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useUser } from '@/hooks/use-user';
+import useOnPlay from '@/hooks/use-on-play';
 import { Song } from '@/types';
 
 import MediaItem from '@/components/media-item';
@@ -16,6 +17,7 @@ interface LikedContentProps {
 const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
   const router = useRouter();
   const { isLoading, user } = useUser();
+  const onPlay = useOnPlay(songs);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -39,7 +41,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
           className='flex items-center gap-x-4 w-full'>
           <div className='flex-1'>
             <MediaItem
-              onClick={() => {}}
+              onClick={(id) => onPlay(id)}
               data={song}
             />
           </div>
